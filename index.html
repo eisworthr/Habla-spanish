@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Habla — Spanish Coach</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#0b0d10;color:#f4f5f7;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+.app{max-width:520px;margin:auto;min-height:100vh;padding-bottom:92px}.top{padding:24px 20px 10px;display:flex;justify-content:space-between;align-items:center}
+.logo{font-size:25px;font-weight:800}.flag{font-size:22px}.sub{color:#9ba2ad;font-size:13px;margin-top:3px}
+.card{margin:12px 16px;padding:20px;border-radius:22px;background:#15191f;border:1px solid #252b34}.hero{padding:22px}.eyebrow{text-transform:uppercase;letter-spacing:1.5px;font-size:11px;color:#8f98a6;font-weight:700}.big{font-size:31px;line-height:1.12;font-weight:800;margin:8px 0}.muted{color:#a7adb7}.progress{height:8px;background:#272c34;border-radius:99px;overflow:hidden;margin-top:14px}.bar{height:100%;width:18%;background:#f4f5f7;border-radius:99px}
+.btn{width:100%;border:0;border-radius:15px;padding:15px 18px;font-size:16px;font-weight:750;cursor:pointer;margin-top:14px;background:#fff;color:#101216}.btn.secondary{background:#242a33;color:#fff}.btn.listen{font-size:18px}.lesson{display:none}.lesson.active{display:block}.phrase{font-size:34px;font-weight:800;margin:25px 0 6px}.translation{font-size:17px;color:#aeb4bd}.chips{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}.chip{background:#202630;padding:8px 10px;border-radius:10px;color:#cbd0d8;font-size:13px}
+.choice{padding:14px;border:1px solid #303640;border-radius:13px;margin:9px 0;cursor:pointer}.choice.correct{border-color:#fff}.choice.wrong{opacity:.45}.status{min-height:24px;margin-top:12px;font-weight:700}.nav{position:fixed;bottom:0;left:0;right:0;background:#111419;border-top:1px solid #262b33;display:flex;justify-content:center;gap:8px;padding:10px 8px}.nav button{flex:1;max-width:120px;background:none;border:0;color:#9da4ae;padding:8px;font-weight:650}.nav button.active{color:#fff}.screen{display:none}.screen.active{display:block}.statgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.stat{background:#191e25;padding:16px;border-radius:16px}.stat b{font-size:25px;display:block;margin-top:4px}.small{font-size:12px;color:#9299a5}.list{margin-top:12px}.list div{padding:14px 0;border-bottom:1px solid #252a32}.voice{font-size:42px;text-align:center;padding:14px}.note{font-size:13px;line-height:1.5;color:#aab0ba}
+</style>
+</head>
+<body>
+<div class="app">
+<header class="top"><div><div class="logo">Habla</div><div class="sub">Your Spanish speaking coach</div></div><div class="flag">🇲🇽</div></header>
+
+<section id="home" class="screen active">
+<div class="card hero"><div class="eyebrow">Today · Beginner</div><div class="big">Your first Spanish conversation starts today.</div><div class="muted">15 minutes · Speaking first</div><div class="progress"><div class="bar" id="homebar"></div></div><button class="btn" onclick="show('learn')">Start today's lesson</button></div>
+<div class="card"><div class="eyebrow">Your goal</div><div class="big" style="font-size:23px">Speak without translating.</div><div class="note">We'll start with useful Mexican Spanish. You will hear it, say it, understand it, and use it in a conversation.</div></div>
+<div class="card"><div class="eyebrow">Progress</div><div class="statgrid"><div class="stat"><span class="small">Speaking</span><b>0%</b></div><div class="stat"><span class="small">Streak</span><b>1 🔥</b></div></div></div>
+</section>
+
+<section id="learn" class="screen">
+<div class="card lesson active" id="l1"><div class="eyebrow">Lesson 1 · Greeting</div><div class="phrase">Hola.</div><div class="translation">Hello.</div><div class="chips"><span class="chip">OH-la</span><span class="chip">Use anytime</span></div><button class="btn listen" onclick="speak('Hola')">🔊 Hear it</button><button class="btn secondary" onclick="next(1)">I said it →</button></div>
+<div class="card lesson" id="l2"><div class="eyebrow">Say this</div><div class="phrase">¿Cómo estás?</div><div class="translation">How are you?</div><div class="chips"><span class="chip">KOH-moh ehs-TAHS</span><span class="chip">Casual</span></div><button class="btn listen" onclick="speak('¿Cómo estás?')">🔊 Hear it</button><button class="btn secondary" onclick="next(2)">I said it →</button></div>
+<div class="card lesson" id="l3"><div class="eyebrow">Your turn</div><div class="phrase">Estoy bien.</div><div class="translation">I'm good / I'm well.</div><button class="btn listen" onclick="speak('Estoy bien.')">🔊 Hear it</button><button class="btn secondary" onclick="next(3)">I said it →</button></div>
+<div class="card lesson" id="l4"><div class="eyebrow">Quick check</div><div class="big" style="font-size:22px">Someone says “¿Cómo estás?” What do you say?</div>
+<div class="choice" onclick="answer(this,false)">Hola.</div><div class="choice" onclick="answer(this,true)">Estoy bien.</div><div class="choice" onclick="answer(this,false)">Me llamo Russell.</div><div class="status" id="quiz"></div><button class="btn" onclick="next(4)">Continue</button></div>
+<div class="card lesson" id="l5"><div class="eyebrow">Mini conversation</div><div class="big" style="font-size:22px">Now put it together.</div><div class="phrase" style="font-size:25px">👩‍🏫 Hola. ¿Cómo estás?</div><div class="note">Say your answer out loud before revealing it.</div><button class="btn listen" onclick="speak('Hola. Estoy bien, gracias. ¿Y tú?')">🔊 Hear a natural answer</button><button class="btn" onclick="finishLesson()">Finish lesson</button></div>
+</section>
+
+<section id="speak" class="screen">
+<div class="card"><div class="eyebrow">Speaking practice</div><div class="big">Say a phrase.</div><div class="voice">🎙️</div><div class="note">This first version uses your device's speech/voice capabilities where supported. The full app will score pronunciation and conversation automatically.</div><button class="btn" onclick="startSpeech()">Start speaking</button><div id="heard" class="status"></div></div>
+<div class="card"><div class="eyebrow">Today's phrases</div><div class="list"><div>Hola. <span class="muted">— Hello.</span></div><div>¿Cómo estás? <span class="muted">— How are you?</span></div><div>Estoy bien. <span class="muted">— I'm good.</span></div></div></div>
+</section>
+
+<section id="progress" class="screen">
+<div class="card"><div class="eyebrow">Your journey</div><div class="big">Absolute beginner → conversation</div><div class="statgrid"><div class="stat"><span class="small">Lessons</span><b id="lessons">0</b></div><div class="stat"><span class="small">Speaking</span><b id="speaking">0%</b></div><div class="stat"><span class="small">Words</span><b>3</b></div><div class="stat"><span class="small">Streak</span><b>1 🔥</b></div></div></div>
+<div class="card"><div class="eyebrow">Next milestone</div><div class="big" style="font-size:22px">Introduce yourself.</div><div class="note">Next lessons: Me llamo… · Soy de… · Vivo en… · Mucho gusto.</div></div>
+</section>
+</div>
+<nav class="nav"><button id="nhome" class="active" onclick="show('home')">⌂<br>Home</button><button id="nlearn" onclick="show('learn')">📚<br>Learn</button><button id="nspeak" onclick="show('speak')">🗣️<br>Speak</button><button id="nprogress" onclick="show('progress')">📈<br>Progress</button></nav>
+<script>
+let completed=0;
+function show(id){document.querySelectorAll('.screen').forEach(x=>x.classList.remove('active'));document.getElementById(id).classList.add('active');document.querySelectorAll('.nav button').forEach(x=>x.classList.remove('active'));let n=document.getElementById('n'+id);if(n)n.classList.add('active');}
+function speak(t){if('speechSynthesis' in window){speechSynthesis.cancel();let u=new SpeechSynthesisUtterance(t);u.lang='es-MX';u.rate=.82;speechSynthesis.speak(u)}}
+function next(n){document.getElementById('l'+n).classList.remove('active');document.getElementById('l'+(n+1)).classList.add('active');}
+function answer(el,good){document.querySelectorAll('.choice').forEach(x=>x.classList.remove('correct','wrong'));el.classList.add(good?'correct':'wrong');document.getElementById('quiz').textContent=good?'✓ Correct — Estoy bien.':'Not quite. Try again.'}
+function finishLesson(){completed=1;document.getElementById('lessons').textContent=completed;document.getElementById('speaking').textContent='8%';document.getElementById('homebar').style.width='35%';show('home');}
+function startSpeech(){let SR=window.SpeechRecognition||window.webkitSpeechRecognition;if(!SR){document.getElementById('heard').textContent='Speech recognition is not available in this browser. Try the Hear it buttons.';return}let r=new SR();r.lang='es-MX';r.interimResults=false;r.maxAlternatives=1;r.start();document.getElementById('heard').textContent='Listening…';r.onresult=e=>{document.getElementById('heard').textContent='I heard: '+e.results[0][0].transcript};r.onerror=()=>document.getElementById('heard').textContent='Try again and speak clearly.'}
+</script>
+</body>
+</html>
