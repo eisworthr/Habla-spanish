@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#0b1020">
+<title>Habla - Mexican Spanish Coach</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#0b1020;color:#fff;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}.app{max-width:720px;margin:auto;padding:18px 16px 90px}.top{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px}.logo{font-size:25px;font-weight:800}.sub,.muted{color:#9aa8bd}.card{background:#121a2b;border:1px solid #26324a;border-radius:20px;padding:20px;margin:12px 0}.phrase{font-size:32px;font-weight:800;margin:15px 0}.translation{font-size:18px;color:#d1d9e6}.note{background:#0d1423;padding:14px;border-radius:14px;margin-top:15px;line-height:1.5}button{width:100%;padding:15px;margin-top:10px;border:0;border-radius:14px;background:#3b82f6;color:#fff;font-size:16px;font-weight:700}button.secondary{background:#202b40}.nav{position:fixed;bottom:0;left:0;right:0;background:#0b1020;padding:10px;display:flex;gap:6px}.nav button{margin:0;background:transparent;color:#9aa8bd}.barbg{height:8px;background:#253049;border-radius:9px}.bar{height:8px;background:#60a5fa;border-radius:9px}.score{text-align:center;font-size:48px;font-weight:800}
+</style>
+</head>
+<body>
+<div class="app" id="app"></div>
+<div class="nav">
+<button onclick="showHome()">Home</button>
+<button onclick="showLearn()">Learn</button>
+<button onclick="showSpeak()">Speak</button>
+<button onclick="showProgress()">Progress</button>
+</div>
+<script>
+var lessons=[
+{es:"Hola",en:"Hello",tip:"A universal everyday greeting."},
+{es:"Buenos días",en:"Good morning",tip:"Use this in the morning."},
+{es:"¿Cómo estás?",en:"How are you?",tip:"Informal and very common with people you know."},
+{es:"Estoy bien",en:"I'm good / I'm fine",tip:"Estoy means 'I am' for a current state."},
+{es:"Gracias",en:"Thank you",tip:"Stress the first syllable: GRA-cias."},
+{es:"¿Y tú?",en:"And you?",tip:"Tú is informal 'you' for one person."},
+{es:"Me llamo Russell",en:"My name is Russell",tip:"A natural way to introduce your name."},
+{es:"Mucho gusto",en:"Nice to meet you",tip:"Common when meeting someone for the first time."}
+];
+var state={lesson:0,done:0,spoken:0};
+try{var saved=localStorage.getItem("hablaState");if(saved){state=JSON.parse(saved)}}catch(e){}
+function save(){try{localStorage.setItem("hablaState",JSON.stringify(state))}catch(e){}}
+function showHome(){
+document.getElementById("app").innerHTML='<div class="top"><div><div class="logo">Habla 🇲🇽</div><div class="sub">Mexican Spanish Coach</div></div><b>A1</b></div><div class="card"><h1>Start speaking Spanish.</h1><p class="muted">Built for a beginner who can read some Spanish but cannot speak yet. Hear it, understand the grammar, say it, then use it.</p><div class="barbg"><div class="bar" style="width:'+(state.done/lessons.length*100)+'%"></div></div><button onclick="showLearn()">Start today's lesson</button></div><div class="card"><h2>Today's method</h2><p class="muted">Hear → Understand → Speak → Use in conversation.</p></div><div class="card"><h2>Mexican Spanish</h2><p class="muted">Speech playback is set to Spanish (Mexico), es-MX.</p></div>';
+}
+function speakText(text){
+if(!window.speechSynthesis){alert("Speech playback is not supported in this browser.");return}
+window.speechSynthesis.cancel();
+var u=new SpeechSynthesisUtterance(text);u.lang="es-MX";u.rate=0.78;
+var voices=window.speechSynthesis.getVoices();
+for(var i=0;i<voices.length;i++){if(voices[i].lang&&voices[i].lang.toLowerCase()==="es-mx"){u.voice=voices[i];break}}
+window.speechSynthesis.speak(u);
+}
+function showLearn(){
+var x=lessons[state.lesson%lessons.length];
+document.getElementById("app").innerHTML='<div class="top"><div><div class="logo">Lesson '+(state.lesson%lessons.length+1)+' / '+lessons.length+'</div><div class="sub">Mexican Spanish</div></div></div><div class="card"><div class="small">SPANISH</div><div class="phrase">'+x.es+'</div><div class="translation">'+x.en+'</div><button onclick="speakText('+JSON.stringify(x.es)+')">🔊 Hear Mexican Spanish</button><div class="note"><b>Grammar / usage:</b><br>'+x.tip+'</div><button class="secondary" onclick="practice('+JSON.stringify(x.es)+')">🎤 Say it yourself</button></div><div class="card"><h2>Quick check</h2><p class="muted">What does <b>'+x.es+'</b> mean?</p><button class="secondary" onclick="correctAnswer()">'+x.en+'</button><button class="secondary" onclick="wrongAnswer()">See you later</button></div>';
+}
+function correctAnswer(){state.done=Math.max(state.done,state.lesson+1);save();alert("Correct! Now say the Spanish phrase out loud.");}
+function wrongAnswer(){alert("Not quite. Listen again, then choose the English meaning.");}
+function practice(target){
+var R=window.SpeechRecognition||window.webkitSpeechRecognition;
+if(!R){alert("Speech recognition is not available in this browser. Use the Hear button and repeat aloud.");return}
+var r=new R();r.lang="es-MX";r.interimResults=false;r.maxAlternatives=1;
+r.onresult=function(e){state.spoken++;save();alert("I heard: “"+e.results[0][0].transcript+"”\n\nKeep practicing!");};
+r.onerror=function(){alert("I couldn't hear you clearly. Try again somewhere quiet.");};
+r.start();
+}
+function showSpeak(){
+document.getElementById("app").innerHTML='<div class="logo">Speak</div><div class="sub">Mini conversation</div><div class="card"><h2>Coach says:</h2><div class="phrase">¿Cómo estás?</div><div class="translation">How are you?</div><button onclick="speakText('¿Cómo estás?')">🔊 Hear the question</button><button class="secondary" onclick="speakText('Estoy bien, gracias. ¿Y tú?')">🔊 Hear a natural answer</button><button onclick="practice('Estoy bien, gracias. ¿Y tú?')">🎤 Practice the answer</button></div><div class="card"><h2>Grammar pattern</h2><p class="muted"><b>Estoy + state/feeling</b><br>Estoy bien = I'm good<br>Estoy cansado = I'm tired<br>Estoy listo = I'm ready</p></div>';
+}
+function showProgress(){
+document.getElementById("app").innerHTML='<div class="logo">Progress</div><div class="sub">Your Spanish journey</div><div class="card"><div class="score">A1</div><p class="muted">Starter foundation</p></div><div class="card"><p class="muted">'+state.done+' of '+lessons.length+' phrases reviewed</p><p class="muted">'+state.spoken+' speaking practices completed</p></div><button class="secondary" onclick="state={lesson:0,done:0,spoken:0};save();showHome()">Reset progress</button>';
+}
+showHome();
+</script>
+</body>
+</html>
